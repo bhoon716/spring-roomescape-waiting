@@ -152,7 +152,7 @@ document.addEventListener("DOMContentLoaded", () => {
             ...options,
             headers: {
                 Accept: "application/json",
-                ...(options.body ? { "Content-Type": "application/json" } : {}),
+                ...(options.body ? {"Content-Type": "application/json"} : {}),
                 ...(options.headers || {})
             }
         });
@@ -167,22 +167,22 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const THEME_META = {
-        "공포": { genre: "호러/스릴러", difficulty: 4, duration: "60분", players: "2-6인" },
-        "스릴러": { genre: "스릴러/탈출", difficulty: 3, duration: "60분", players: "2-5인" },
-        "청춘물": { genre: "드라마/감성", difficulty: 2, duration: "60분", players: "2-4인" },
-        "미스터리": { genre: "추리/미스터리", difficulty: 4, duration: "75분", players: "2-5인" },
-        "판타지": { genre: "판타지/어드벤처", difficulty: 3, duration: "60분", players: "2-6인" },
-        "우주": { genre: "SF/스릴러", difficulty: 5, duration: "75분", players: "2-4인" },
-        "잠입": { genre: "액션/잠입", difficulty: 3, duration: "60분", players: "2-4인" },
-        "재난": { genre: "서바이벌/재난", difficulty: 4, duration: "60분", players: "2-5인" },
-        "사극": { genre: "사극/추리", difficulty: 3, duration: "60분", players: "2-6인" },
-        "모험": { genre: "어드벤처", difficulty: 3, duration: "60분", players: "2-6인" },
-        "코미디": { genre: "코미디/드라마", difficulty: 2, duration: "60분", players: "2-4인" },
-        "느와르": { genre: "느와르/액션", difficulty: 4, duration: "75분", players: "2-5인" }
+        "공포": {genre: "호러/스릴러", difficulty: 4, duration: "60분", players: "2-6인"},
+        "스릴러": {genre: "스릴러/탈출", difficulty: 3, duration: "60분", players: "2-5인"},
+        "청춘물": {genre: "드라마/감성", difficulty: 2, duration: "60분", players: "2-4인"},
+        "미스터리": {genre: "추리/미스터리", difficulty: 4, duration: "75분", players: "2-5인"},
+        "판타지": {genre: "판타지/어드벤처", difficulty: 3, duration: "60분", players: "2-6인"},
+        "우주": {genre: "SF/스릴러", difficulty: 5, duration: "75분", players: "2-4인"},
+        "잠입": {genre: "액션/잠입", difficulty: 3, duration: "60분", players: "2-4인"},
+        "재난": {genre: "서바이벌/재난", difficulty: 4, duration: "60분", players: "2-5인"},
+        "사극": {genre: "사극/추리", difficulty: 3, duration: "60분", players: "2-6인"},
+        "모험": {genre: "어드벤처", difficulty: 3, duration: "60분", players: "2-6인"},
+        "코미디": {genre: "코미디/드라마", difficulty: 2, duration: "60분", players: "2-4인"},
+        "느와르": {genre: "느와르/액션", difficulty: 4, duration: "75분", players: "2-5인"}
     };
 
     function getMeta(name) {
-        return THEME_META[name] || { genre: "일반 탈출", difficulty: 3, duration: "60분", players: "2-5인" };
+        return THEME_META[name] || {genre: "일반 탈출", difficulty: 3, duration: "60분", players: "2-5인"};
     }
 
     function renderThemes() {
@@ -423,7 +423,7 @@ document.addEventListener("DOMContentLoaded", () => {
         renderRankedThemes();
     }
 
-    async function loadCurrentReservations({ silent = false } = {}) {
+    async function loadCurrentReservations({silent = false} = {}) {
         try {
             const result = await fetchJson("/reservations");
             state.currentUserName = result.username;
@@ -477,7 +477,7 @@ document.addEventListener("DOMContentLoaded", () => {
         selectionSummary.textContent = `${theme.name} · ${state.selectedDate} 기준으로 가능한 시간입니다.`;
         reservationFormSummary.textContent = `${theme.name} · ${state.selectedDate}`;
         setStatus(state.slots.length > 0 ? "가능한 시간을 불러왔습니다." : "선택한 조건에 가능한 시간이 없습니다.");
-        timeSection.scrollIntoView({ behavior: "smooth", block: "start" });
+        timeSection.scrollIntoView({behavior: "smooth", block: "start"});
     }
 
     async function loadEditSlots(reservation, date) {
@@ -503,7 +503,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const response = await fetch(`/reservations/${id}`, {
             method: "DELETE",
-            headers: { Accept: "application/json" }
+            headers: {Accept: "application/json"}
         });
         const result = await parseResponse(response);
         if (!response.ok) {
@@ -512,7 +512,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         setMessage(userReservationMessage, "예약이 취소되었습니다.", "success");
-        await loadCurrentReservations({ silent: true });
+        await loadCurrentReservations({silent: true});
     }
 
     async function updateReservation(id, slotId) {
@@ -522,7 +522,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 "Content-Type": "application/json",
                 Accept: "application/json"
             },
-            body: JSON.stringify({ slotId })
+            body: JSON.stringify({slotId})
         });
         const result = await parseResponse(response);
         if (!response.ok) {
@@ -531,7 +531,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         setMessage(userReservationMessage, "예약이 변경되었습니다.", "success");
-        await loadCurrentReservations({ silent: true });
+        await loadCurrentReservations({silent: true});
     }
 
     async function submitAuth(endpoint, form, messageElement) {
@@ -550,7 +550,7 @@ document.addEventListener("DOMContentLoaded", () => {
             setMessage(messageElement, `${result.name}님으로 로그인되었습니다.`, "success");
             form.reset();
             updateAuthUi();
-            await loadCurrentReservations({ silent: true });
+            await loadCurrentReservations({silent: true});
         } catch (error) {
             setMessage(messageElement, error.message, "error");
         }
@@ -568,7 +568,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     logoutButton.addEventListener("click", async () => {
         try {
-            await fetchJson("/logout", { method: "DELETE" });
+            await fetchJson("/logout", {method: "DELETE"});
         } catch (error) {
             // logout should still clear local UI state
         }
@@ -635,14 +635,14 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
             const result = await fetchJson("/reservations", {
                 method: "POST",
-                body: JSON.stringify({ slotId })
+                body: JSON.stringify({slotId})
             });
             setMessage(
                 reservationMessage,
                 `${result.theme.name} 예약이 완료되었습니다. (${result.date} ${result.startAt})`,
                 "success"
             );
-            await loadCurrentReservations({ silent: true });
+            await loadCurrentReservations({silent: true});
         } catch (error) {
             setMessage(reservationMessage, error.message, "error");
         }
@@ -670,7 +670,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     loadThemesAndRanks()
-        .then(() => loadCurrentReservations({ silent: true }))
+        .then(() => loadCurrentReservations({silent: true}))
         .catch(() => {
             setStatus("초기 데이터를 불러오지 못했습니다.");
         })

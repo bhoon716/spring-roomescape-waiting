@@ -2,21 +2,21 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <title>Roomescape Reservation</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/times.css}">
 </head>
 <body>
 <header class="topbar">
     <div class="topbar-inner">
-        <a href="/" class="brand">ROOM<span>ESCAPE</span></a>
+        <a class="brand" href="/">ROOM<span>ESCAPE</span></a>
         <nav class="main-nav">
-            <button type="button" class="nav-link-button active">예약 진행</button>
-            <button type="button" class="nav-link-button" data-scroll-target="user-reservations-section">내 예약</button>
-            <button type="button" class="nav-link-button" data-modal-open="popular-theme-modal">인기테마</button>
+            <button class="nav-link-button active" type="button">예약 진행</button>
+            <button class="nav-link-button" data-scroll-target="user-reservations-section" type="button">내 예약</button>
+            <button class="nav-link-button" data-modal-open="popular-theme-modal" type="button">인기테마</button>
         </nav>
     </div>
 </header>
@@ -26,7 +26,7 @@
         <div class="hero-copy hero-copy-home">
             <h1>방탈출 예약 시스템</h1>
             <div class="hero-actions">
-                <button type="button" class="secondary-button" data-modal-open="popular-theme-modal">인기테마 조회</button>
+                <button class="secondary-button" data-modal-open="popular-theme-modal" type="button">인기테마 조회</button>
             </div>
         </div>
     </section>
@@ -39,26 +39,26 @@
                     <h2>로그인하고 예약하세요</h2>
                     <p id="auth-status">로그인이 필요합니다.</p>
                 </div>
-                <button type="button" id="logout-button" class="secondary-button">로그아웃</button>
+                <button class="secondary-button" id="logout-button" type="button">로그아웃</button>
             </div>
             <div class="auth-grid">
-                <form id="signup-form" class="reservation-form auth-card">
+                <form class="reservation-form auth-card" id="signup-form">
                     <h3>회원가입</h3>
                     <label for="signup-name">이름</label>
-                    <input id="signup-name" name="name" type="text" maxlength="20" placeholder="이름을 입력하세요" required>
+                    <input id="signup-name" maxlength="20" name="name" placeholder="이름을 입력하세요" required type="text">
                     <label for="signup-password">비밀번호</label>
-                    <input id="signup-password" name="password" type="password" placeholder="비밀번호를 입력하세요" required>
-                    <button type="submit" class="primary-button full-width">회원가입</button>
-                    <p id="signup-message" class="form-message" aria-live="polite"></p>
+                    <input id="signup-password" name="password" placeholder="비밀번호를 입력하세요" required type="password">
+                    <button class="primary-button full-width" type="submit">회원가입</button>
+                    <p aria-live="polite" class="form-message" id="signup-message"></p>
                 </form>
-                <form id="login-form" class="reservation-form auth-card">
+                <form class="reservation-form auth-card" id="login-form">
                     <h3>로그인</h3>
                     <label for="login-name">이름</label>
-                    <input id="login-name" name="name" type="text" maxlength="20" placeholder="이름을 입력하세요" required>
+                    <input id="login-name" maxlength="20" name="name" placeholder="이름을 입력하세요" required type="text">
                     <label for="login-password">비밀번호</label>
-                    <input id="login-password" name="password" type="password" placeholder="비밀번호를 입력하세요" required>
-                    <button type="submit" class="primary-button full-width">로그인</button>
-                    <p id="login-message" class="form-message" aria-live="polite"></p>
+                    <input id="login-password" name="password" placeholder="비밀번호를 입력하세요" required type="password">
+                    <button class="primary-button full-width" type="submit">로그인</button>
+                    <p aria-live="polite" class="form-message" id="login-message"></p>
                 </form>
             </div>
         </section>
@@ -88,18 +88,19 @@
                     </div>
                     <label class="date-picker">
                         <span>예약 날짜</span>
-                        <input id="reservation-date" type="date" name="reservationDate" required>
+                        <input id="reservation-date" name="reservationDate" required type="date">
                     </label>
                 </section>
 
                 <div class="selection-actions selection-actions-home">
-                    <button type="button" id="show-times-button" class="primary-button">예약하기</button>
-                    <button type="button" id="reset-selection-button" class="secondary-button secondary-link">선택 초기화</button>
+                    <button class="primary-button" id="show-times-button" type="button">예약하기</button>
+                    <button class="secondary-button secondary-link" id="reset-selection-button" type="button">선택 초기화
+                    </button>
                 </div>
             </section>
         </section>
 
-        <section class="panel section-panel" id="time-section" hidden>
+        <section class="panel section-panel" hidden id="time-section">
             <div class="section-title">
                 <div>
                     <span class="section-kicker">STEP 3</span>
@@ -109,15 +110,15 @@
             </div>
             <div class="time-layout-refined">
                 <div class="time-grid time-grid-refined" id="time-list"></div>
-                <form id="reservation-form" class="reservation-form reservation-form-refined">
-                    <input type="hidden" name="slotId" id="selected-slot-id">
+                <form class="reservation-form reservation-form-refined" id="reservation-form">
+                    <input id="selected-slot-id" name="slotId" type="hidden">
                     <div class="reservation-form-head">
                         <h3>예약 정보 입력</h3>
                         <p id="reservation-form-summary">테마와 날짜를 선택해 주세요.</p>
                     </div>
-                    <p id="current-user-summary" class="helper-text">로그인 후 예약할 수 있습니다.</p>
-                    <button type="submit" class="primary-button full-width">예약 확정</button>
-                    <p id="reservation-message" class="form-message" aria-live="polite"></p>
+                    <p class="helper-text" id="current-user-summary">로그인 후 예약할 수 있습니다.</p>
+                    <button class="primary-button full-width" type="submit">예약 확정</button>
+                    <p aria-live="polite" class="form-message" id="reservation-message"></p>
                 </form>
             </div>
         </section>
@@ -129,25 +130,25 @@
                     <h2>내 예약</h2>
                     <p id="user-reservation-description">로그인 후 예약 목록을 확인할 수 있습니다.</p>
                 </div>
-                <button type="button" class="secondary-button" id="refresh-reservations-button">새로고침</button>
+                <button class="secondary-button" id="refresh-reservations-button" type="button">새로고침</button>
             </div>
-            <p id="user-reservation-message" class="form-message" aria-live="polite"></p>
-            <div id="user-reservation-list" class="user-reservation-list"></div>
+            <p aria-live="polite" class="form-message" id="user-reservation-message"></p>
+            <div class="user-reservation-list" id="user-reservation-list"></div>
         </section>
 
     </main>
 </div>
 
-<div id="popular-theme-modal" class="modal" hidden>
+<div class="modal" hidden id="popular-theme-modal">
     <div class="modal-backdrop" data-modal-close></div>
-    <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="popular-theme-title">
+    <div aria-labelledby="popular-theme-title" aria-modal="true" class="modal-dialog" role="dialog">
         <div class="modal-header">
             <div>
                 <p class="section-kicker">TOP THEMES</p>
                 <h2 id="popular-theme-title">인기 테마</h2>
                 <p>최근 7일 기준으로 많이 예약된 테마입니다.</p>
             </div>
-            <button type="button" class="modal-close" aria-label="닫기" data-modal-close>X</button>
+            <button aria-label="닫기" class="modal-close" data-modal-close type="button">X</button>
         </div>
         <ol class="rank-list modal-rank-list" id="rank-list"></ol>
     </div>

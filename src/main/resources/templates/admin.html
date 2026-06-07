@@ -2,22 +2,24 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <title>Roomescape Admin</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/admin.css}">
 </head>
 <body>
 <header class="admin-topbar">
     <div class="admin-topbar-inner">
-        <a href="/admin" class="admin-brand">ROOMESCAPE ADMIN</a>
-        <nav class="admin-nav" id="admin-nav" hidden>
-            <button type="button" class="admin-nav-button active" data-tab-target="themes-panel">테마 관리</button>
-            <button type="button" class="admin-nav-button" data-tab-target="times-panel">예약 시간 관리</button>
-            <button type="button" class="admin-nav-button" data-tab-target="reservations-panel">예약 관리</button>
-            <button type="button" class="admin-nav-button danger-button" id="logout-button" style="margin-left: 20px;">로그아웃</button>
+        <a class="admin-brand" href="/admin">ROOMESCAPE ADMIN</a>
+        <nav class="admin-nav" hidden id="admin-nav">
+            <button class="admin-nav-button active" data-tab-target="themes-panel" type="button">테마 관리</button>
+            <button class="admin-nav-button" data-tab-target="times-panel" type="button">예약 시간 관리</button>
+            <button class="admin-nav-button" data-tab-target="reservations-panel" type="button">예약 관리</button>
+            <button class="admin-nav-button danger-button" id="logout-button" style="margin-left: 20px;" type="button">
+                로그아웃
+            </button>
         </nav>
     </div>
 </header>
@@ -31,131 +33,132 @@
         </div>
     </section>
 
-    <section id="login-panel" class="admin-panel">
+    <section class="admin-panel" id="login-panel">
         <div class="panel-header">
             <div>
                 <p class="admin-kicker">인증</p>
                 <h2>관리자 로그인</h2>
             </div>
         </div>
-        <form id="login-form" class="admin-form">
+        <form class="admin-form" id="login-form">
             <div class="field-grid field-grid-single">
                 <label>
                     <span>이름</span>
-                    <input type="text" name="name" placeholder="이름을 입력하세요" required autocomplete="username">
+                    <input autocomplete="username" name="name" placeholder="이름을 입력하세요" required type="text">
                 </label>
                 <label>
                     <span>비밀번호</span>
-                    <input type="password" name="password" placeholder="비밀번호를 입력하세요" required autocomplete="current-password">
+                    <input autocomplete="current-password" name="password" placeholder="비밀번호를 입력하세요" required
+                           type="password">
                 </label>
             </div>
             <div class="form-actions" style="margin-top: 12px; justify-content: flex-start; gap: 16px;">
-                <button type="submit" class="primary-button">로그인</button>
-                <p id="login-form-message" class="form-message"></p>
+                <button class="primary-button" type="submit">로그인</button>
+                <p class="form-message" id="login-form-message"></p>
             </div>
         </form>
     </section>
 
-    <section id="themes-panel" class="admin-panel" hidden>
+    <section class="admin-panel" hidden id="themes-panel">
         <div class="panel-header">
             <div>
                 <p class="admin-kicker">테마 관리</p>
                 <h2>테마 목록</h2>
             </div>
-            <button type="button" class="secondary-button" data-refresh-target="themes">새로고침</button>
+            <button class="secondary-button" data-refresh-target="themes" type="button">새로고침</button>
         </div>
-        <form id="theme-form" class="admin-form">
+        <form class="admin-form" id="theme-form">
             <div class="field-grid field-grid-theme">
                 <label>
                     <span>테마 이름</span>
-                    <input type="text" name="name" placeholder="예: 공포" required>
+                    <input name="name" placeholder="예: 공포" required type="text">
                 </label>
                 <label>
                     <span>테마 설명</span>
-                    <input type="text" name="content" placeholder="테마 설명을 입력하세요" required>
+                    <input name="content" placeholder="테마 설명을 입력하세요" required type="text">
                 </label>
                 <label>
                     <span>이미지 URL</span>
-                    <input type="text" name="url" placeholder="/themes/scary" required>
+                    <input name="url" placeholder="/themes/scary" required type="text">
                 </label>
             </div>
             <div class="form-actions">
-                <button type="submit" class="primary-button">테마 추가</button>
-                <p id="theme-form-message" class="form-message"></p>
+                <button class="primary-button" type="submit">테마 추가</button>
+                <p class="form-message" id="theme-form-message"></p>
             </div>
         </form>
-        <div id="themes-list" class="card-list"></div>
+        <div class="card-list" id="themes-list"></div>
     </section>
 
-    <section id="times-panel" class="admin-panel" hidden>
+    <section class="admin-panel" hidden id="times-panel">
         <div class="panel-header">
             <div>
                 <p class="admin-kicker">예약 시간 관리</p>
                 <h2>예약 시간 목록</h2>
             </div>
-            <button type="button" class="secondary-button" data-refresh-target="times">새로고침</button>
+            <button class="secondary-button" data-refresh-target="times" type="button">새로고침</button>
         </div>
-        <form id="time-form" class="admin-form">
+        <form class="admin-form" id="time-form">
             <div class="field-grid field-grid-single">
                 <label>
                     <span>예약 시간</span>
-                    <input type="time" name="startAt" required>
+                    <input name="startAt" required type="time">
                 </label>
             </div>
             <div class="form-actions">
-                <button type="submit" class="primary-button">시간 추가</button>
-                <p id="time-form-message" class="form-message"></p>
+                <button class="primary-button" type="submit">시간 추가</button>
+                <p class="form-message" id="time-form-message"></p>
             </div>
         </form>
-        <div id="times-list" class="simple-list"></div>
+        <div class="simple-list" id="times-list"></div>
     </section>
 
-    <section id="reservations-panel" class="admin-panel" hidden>
+    <section class="admin-panel" hidden id="reservations-panel">
         <div class="panel-header">
             <div>
                 <p class="admin-kicker">예약 관리</p>
                 <h2>예약 목록</h2>
             </div>
-            <button type="button" class="secondary-button" data-refresh-target="reservations">새로고침</button>
+            <button class="secondary-button" data-refresh-target="reservations" type="button">새로고침</button>
         </div>
-        <form id="reservation-form" class="admin-form">
+        <form class="admin-form" id="reservation-form">
             <div class="field-grid field-grid-reservation">
                 <label>
                     <span>예약자 이름</span>
-                    <input type="text" name="username" placeholder="예약자 이름을 입력하세요" required>
+                    <input name="username" placeholder="예약자 이름을 입력하세요" required type="text">
                 </label>
                 <label>
                     <span>테마</span>
-                    <select name="themeId" id="admin-reservation-theme" required>
+                    <select id="admin-reservation-theme" name="themeId" required>
                         <option value="">테마를 선택하세요</option>
                     </select>
                 </label>
                 <label>
                     <span>예약 날짜</span>
-                    <input type="date" name="date" id="admin-reservation-date" required>
+                    <input id="admin-reservation-date" name="date" required type="date">
                 </label>
             </div>
             <div class="reservation-slot-picker">
                 <div class="section-kicker">가능한 슬롯</div>
-                <div id="admin-reservation-slot-list" class="slot-list"></div>
+                <div class="slot-list" id="admin-reservation-slot-list"></div>
             </div>
             <div class="form-actions">
-                <button type="submit" class="primary-button">예약 추가</button>
-                <p id="reservation-form-message" class="form-message"></p>
+                <button class="primary-button" type="submit">예약 추가</button>
+                <p class="form-message" id="reservation-form-message"></p>
             </div>
         </form>
-        <div id="reservations-list" class="simple-list"></div>
+        <div class="simple-list" id="reservations-list"></div>
     </section>
 </main>
 
-<div id="admin-modal" class="admin-modal" hidden>
+<div class="admin-modal" hidden id="admin-modal">
     <div class="admin-modal-backdrop" data-admin-modal-close></div>
-    <div class="admin-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="admin-modal-title">
+    <div aria-labelledby="admin-modal-title" aria-modal="true" class="admin-modal-dialog" role="dialog">
         <div class="admin-modal-header">
             <h2 id="admin-modal-title">알림</h2>
-            <button type="button" class="secondary-button" data-admin-modal-close>닫기</button>
+            <button class="secondary-button" data-admin-modal-close type="button">닫기</button>
         </div>
-        <p id="admin-modal-message" class="admin-modal-message"></p>
+        <p class="admin-modal-message" id="admin-modal-message"></p>
     </div>
 </div>
 

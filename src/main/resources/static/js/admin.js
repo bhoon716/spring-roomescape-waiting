@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
             ...options,
             headers: {
                 Accept: "application/json",
-                ...(options.body ? { "Content-Type": "application/json" } : {}),
+                ...(options.body ? {"Content-Type": "application/json"} : {}),
                 ...(options.headers || {})
             }
         });
@@ -164,7 +164,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     async function loadThemes() {
-        const response = await adminFetch("/admin/themes", { method: "GET" });
+        const response = await adminFetch("/admin/themes", {method: "GET"});
         if (response.status === 401 || response.status === 403) {
             throw new Error("로그인이 필요하거나 관리자 권한이 없습니다.");
         }
@@ -175,7 +175,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     async function loadTimes() {
-        const response = await adminFetch("/admin/times", { method: "GET" });
+        const response = await adminFetch("/admin/times", {method: "GET"});
         if (response.status === 401 || response.status === 403) {
             throw new Error("로그인이 필요하거나 관리자 권한이 없습니다.");
         }
@@ -184,7 +184,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     async function loadReservations() {
-        const response = await adminFetch("/admin/reservations", { method: "GET" });
+        const response = await adminFetch("/admin/reservations", {method: "GET"});
         if (response.status === 401 || response.status === 403) {
             throw new Error("로그인이 필요하거나 관리자 권한이 없습니다.");
         }
@@ -201,7 +201,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const response = await fetch(
             `/reservation-slots?themeId=${reservationThemeSelect.value}&date=${reservationDateInput.value}`,
-            { headers: { Accept: "application/json" } }
+            {headers: {Accept: "application/json"}}
         );
         const result = await parseResponse(response);
         if (!response.ok) {
@@ -264,7 +264,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     return;
                 }
 
-                 const response = await adminFetch(endpoint, { method: "DELETE" });
+                const response = await adminFetch(endpoint, {method: "DELETE"});
                 if (response.status === 401 || response.status === 403) {
                     openModal("로그인이 필요하거나 관리자 권한이 없습니다.");
                     return;
@@ -301,7 +301,7 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
             const response = await fetch("/login", {
                 method: "POST",
-                headers: { "Content-Type": "application/json", Accept: "application/json" },
+                headers: {"Content-Type": "application/json", Accept: "application/json"},
                 body: JSON.stringify(payload)
             });
             const result = await parseResponse(response);
@@ -321,8 +321,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     logoutButton.addEventListener("click", async () => {
         try {
-            await fetch("/logout", { method: "DELETE" });
-        } catch (e) {}
+            await fetch("/logout", {method: "DELETE"});
+        } catch (e) {
+        }
         showLogin(true);
     });
 

@@ -217,12 +217,11 @@ public class JdbcReservationRepository implements ReservationRepository {
 
     @Override
     public List<Reservation> findAllBySlotIdOrderByReservedAt(Long slotId) {
-        List<Reservation> result = jdbcTemplate.query(
+        return jdbcTemplate.query(
                 FIND_ALL_BY_SLOT_ID_ORDER_SQL,
                 new MapSqlParameterSource().addValue("slotId", slotId),
                 RESERVATION_ROW_MAPPER
         );
-        return result;
     }
 
     @Override
