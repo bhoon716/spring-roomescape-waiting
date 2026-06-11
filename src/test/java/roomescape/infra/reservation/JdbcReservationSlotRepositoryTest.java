@@ -10,7 +10,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.Import;
-import roomescape.application.exception.DuplicateResourceException;
+import roomescape.domain.exception.BusinessException;
+import roomescape.domain.exception.ErrorCode;
 import roomescape.domain.reservation.ReservationSlot;
 import roomescape.domain.reservation.ReservationTime;
 import roomescape.domain.theme.Theme;
@@ -63,7 +64,9 @@ class JdbcReservationSlotRepositoryTest {
 
         // when & then
         assertThatThrownBy(() -> slotRepository.save(slot))
-                .isInstanceOf(DuplicateResourceException.class);
+                .isInstanceOf(BusinessException.class)
+                .extracting("errorCode")
+                .isEqualTo(ErrorCode.RESERVATION_ALREADY_EXISTS);
     }
 
     @DisplayName("특정 날짜, 테마 ID, 시간 ID를 갖는 슬롯의 존재 여부를 확인할 수 있다")

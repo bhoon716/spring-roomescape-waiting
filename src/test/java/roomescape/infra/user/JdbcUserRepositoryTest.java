@@ -8,7 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.Import;
-import roomescape.application.exception.DuplicateResourceException;
+import roomescape.domain.exception.BusinessException;
+import roomescape.domain.exception.ErrorCode;
 import roomescape.domain.user.User;
 
 @DisplayName("사용자 JDBC 저장소")
@@ -51,6 +52,8 @@ class JdbcUserRepositoryTest {
 
         // when & then
         assertThatThrownBy(() -> userRepository.save(User.create("중복이름")))
-                .isInstanceOf(DuplicateResourceException.class);
+                .isInstanceOf(BusinessException.class)
+                .extracting("errorCode")
+                .isEqualTo(ErrorCode.USER_ALREADY_EXISTS);
     }
 }

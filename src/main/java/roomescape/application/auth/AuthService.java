@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import roomescape.application.auth.request.LoginRequest;
 import roomescape.application.auth.request.SignupRequest;
-import roomescape.application.exception.DuplicateResourceException;
 import roomescape.common.security.PasswordEncoder;
 import roomescape.domain.exception.BusinessException;
 import roomescape.domain.exception.ErrorCode;
@@ -32,11 +31,6 @@ public class AuthService {
 
     public User signup(SignupRequest request) {
         User user = User.create(request.name(), passwordEncoder.encode(request.password()), UserRole.USER);
-
-        try {
-            return userRepository.save(user);
-        } catch (DuplicateResourceException exception) {
-            throw new BusinessException(ErrorCode.USER_ALREADY_EXISTS);
-        }
+        return userRepository.save(user);
     }
 }

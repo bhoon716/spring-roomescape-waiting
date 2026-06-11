@@ -9,7 +9,8 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
-import roomescape.application.exception.DuplicateResourceException;
+import roomescape.domain.exception.BusinessException;
+import roomescape.domain.exception.ErrorCode;
 import roomescape.domain.user.User;
 import roomescape.domain.user.UserRepository;
 import roomescape.domain.user.UserRole;
@@ -59,7 +60,7 @@ public class JdbcUserRepository implements UserRepository {
                     .addValue(COLUMN_PASSWORD, user.getPassword())
                     .addValue(COLUMN_ROLE, user.getRole().name()));
         } catch (DuplicateKeyException exception) {
-            throw new DuplicateResourceException(exception);
+            throw new BusinessException(ErrorCode.USER_ALREADY_EXISTS);
         }
 
         return User.of(extractId(key), user.getName(), user.getPassword(), user.getRole());

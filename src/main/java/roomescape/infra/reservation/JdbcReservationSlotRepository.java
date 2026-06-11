@@ -9,7 +9,8 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
-import roomescape.application.exception.DuplicateResourceException;
+import roomescape.domain.exception.BusinessException;
+import roomescape.domain.exception.ErrorCode;
 import roomescape.domain.reservation.ReservationCountResult;
 import roomescape.domain.reservation.ReservationSlot;
 import roomescape.domain.reservation.ReservationSlotRepository;
@@ -124,7 +125,7 @@ public class JdbcReservationSlotRepository implements ReservationSlotRepository 
                     .addValue(COLUMN_TIME_ID, reservation.getTime().getId())
                     .addValue(COLUMN_THEME_ID, reservation.getTheme().getId()));
         } catch (DuplicateKeyException exception) {
-            throw new DuplicateResourceException(exception);
+            throw new BusinessException(ErrorCode.RESERVATION_ALREADY_EXISTS);
         }
         return ReservationSlot.of(extractId(key), reservation.getDate(), reservation.getTime(),
                 reservation.getTheme());

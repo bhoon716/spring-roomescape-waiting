@@ -12,7 +12,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.Import;
-import roomescape.application.exception.DuplicateResourceException;
+import roomescape.domain.exception.BusinessException;
+import roomescape.domain.exception.ErrorCode;
 import roomescape.domain.reservation.Reservation;
 import roomescape.domain.reservation.ReservationSlot;
 import roomescape.domain.reservation.ReservationStatus;
@@ -109,7 +110,9 @@ class JdbcReservationRepositoryTest {
                 user,
                 slot,
                 LocalDateTime.of(2030, 3, 1, 10, 5)
-        ))).isInstanceOf(DuplicateResourceException.class);
+        ))).isInstanceOf(BusinessException.class)
+                .extracting("errorCode")
+                .isEqualTo(ErrorCode.RESERVATION_ALREADY_EXISTS);
     }
 
     @DisplayName("예약을 삭제할 수 있다")

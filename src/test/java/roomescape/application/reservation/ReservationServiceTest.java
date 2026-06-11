@@ -27,7 +27,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import roomescape.application.exception.DuplicateResourceException;
 import roomescape.application.reservation.request.AdminReservationCreateRequest;
 import roomescape.application.reservation.request.AdminReservationUpdateRequest;
 import roomescape.application.reservation.request.ReservationCreateRequest;
@@ -310,7 +309,8 @@ class ReservationServiceTest {
 
         given(slotRepository.findByIdForUpdate(20L)).willReturn(Optional.of(slot));
         given(reservationRepository.existsBySlotIdAndUserId(20L, 10L)).willReturn(false);
-        given(reservationRepository.save(any(Reservation.class))).willThrow(new DuplicateResourceException());
+        given(reservationRepository.save(any(Reservation.class)))
+                .willThrow(new BusinessException(ErrorCode.RESERVATION_ALREADY_EXISTS));
 
         // when & then
         assertThatThrownBy(() -> reservationService.createReservationByUser(request, user))

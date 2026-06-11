@@ -14,7 +14,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import roomescape.application.auth.request.LoginRequest;
 import roomescape.application.auth.request.SignupRequest;
-import roomescape.application.exception.DuplicateResourceException;
 import roomescape.common.security.Pbkdf2PasswordEncoder;
 import roomescape.domain.exception.BusinessException;
 import roomescape.domain.exception.ErrorCode;
@@ -101,7 +100,7 @@ class AuthServiceTest {
     @DisplayName("이미 존재하는 사용자는 회원가입할 수 없다")
     void signupWhenUserAlreadyExists() {
         // given
-        given(userRepository.save(any())).willThrow(new DuplicateResourceException());
+        given(userRepository.save(any())).willThrow(new BusinessException(ErrorCode.USER_ALREADY_EXISTS));
         AuthService authService = new AuthService(userRepository, passwordEncoder);
 
         // when & then

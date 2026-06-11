@@ -7,7 +7,6 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import roomescape.application.exception.DuplicateResourceException;
 import roomescape.application.reservation.request.AdminReservationCreateRequest;
 import roomescape.application.reservation.request.AdminReservationUpdateRequest;
 import roomescape.application.reservation.request.ReservationCreateRequest;
@@ -188,11 +187,7 @@ public class ReservationService {
     }
 
     private Reservation saveReservation(User user, ReservationSlot slot, LocalDateTime reservedAt) {
-        try {
-            return reservationRepository.save(Reservation.create(user, slot, reservedAt));
-        } catch (DuplicateResourceException exception) {
-            throw new BusinessException(ErrorCode.RESERVATION_ALREADY_EXISTS);
-        }
+        return reservationRepository.save(Reservation.create(user, slot, reservedAt));
     }
 
     private ReservationSlots findReservationSlotsForUpdate(Long currentSlotId, Long targetSlotId) {
