@@ -1,96 +1,68 @@
 package roomescape.domain.reservation;
 
+import java.time.LocalDateTime;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import roomescape.domain.reservationdate.ReservationDate;
-import roomescape.domain.reservationtime.ReservationTime;
-import roomescape.domain.theme.Theme;
-import roomescape.support.exception.BadRequestException;
-import roomescape.support.exception.errors.ReservationErrors;
-import roomescape.support.exception.errors.ReservationTimeErrors;
-import roomescape.support.exception.errors.ThemeErrors;
+import roomescape.domain.user.User;
 
 @Getter
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Reservation {
 
-    private static final int MAX_NAME_LENGTH = 10;
-
     private final Long id;
-    private final String name;
-    private final ReservationDate date;
-    private final ReservationTime time;
-    private final Theme theme;
+    private final User user;
+    private final ReservationSlot slot;
+    private final Integer waitingNumber;
+    private final ReservationStatus status;
+    private final LocalDateTime reservedAt;
 
-    private Reservation(
-        Long id,
-        String name,
-        ReservationDate date,
-        ReservationTime time,
-        Theme theme
-    ) {
-        validate(name, date, time, theme);
-        this.id = id;
-        this.name = name;
-        this.date = date;
-        this.time = time;
-        this.theme = theme;
-    }
-
-    public static Reservation createWithoutId(
-        String name,
-        ReservationDate date,
-        ReservationTime time,
-        Theme theme
+    public static Reservation create(
+            User user,
+            ReservationSlot slot,
+            LocalDateTime reservedAt
     ) {
         return new Reservation(
-            null,
-            name,
-            date,
-            time,
-            theme
-        );
-    }
-
-    public static Reservation createWithId(long id, Reservation reservation) {
-        return of(
-            id,
-            reservation.getName(),
-            reservation.getDate(),
-            reservation.getTime(),
-            reservation.getTheme()
+                null,
+                user,
+                slot,
+                null,
+                ReservationStatus.WAITING,
+                reservedAt
         );
     }
 
     public static Reservation of(
-        long id,
-        String name,
-        ReservationDate date,
-        ReservationTime time,
-        Theme theme
+            Long id,
+            User user,
+            ReservationSlot slot,
+            Integer waitingNumber,
+            ReservationStatus status,
+            LocalDateTime reservedAt
     ) {
         return new Reservation(
-            id,
-            name,
-            date,
-            time,
-            theme
+                id,
+                user,
+                slot,
+                waitingNumber,
+                status,
+                reservedAt
         );
     }
 
-    private static void validate(String name, ReservationDate date, ReservationTime time, Theme theme) {
-        if (name == null || name.isBlank()) {
-            throw new BadRequestException(ReservationErrors.INVALID_RESERVATION_NAME);
-        }
-        if (name.length() > MAX_NAME_LENGTH) {
-            throw new BadRequestException(ReservationErrors.INVALID_RESERVATION_NAME_LENGTH);
-        }
-        if (date == null) {
-            throw new BadRequestException(ReservationErrors.INVALID_RESERVATION_DATE);
-        }
-        if (time == null) {
-            throw new BadRequestException(ReservationTimeErrors.INVALID_RESERVATION_TIME);
-        }
-        if (theme == null) {
-            throw new BadRequestException(ThemeErrors.INVALID_THEME);
-        }
+    public void validateCancellable(LocalDateTime now) {
+        slot.validateIsNotInPast(now);
+    }
+
+    public Reservation updateConfirmed() {
+        return new Reservation(id, user, slot, 0, ReservationStatus.CONFIRMED, reservedAt);
+    }
+
+    public Reservation updateWaiting(int waitingNumber) {
+        return new Reservation(id, user, slot, waitingNumber, ReservationStatus.WAITING, reservedAt);
+    }
+
+    public Reservation moveTo(ReservationSlot newSlot, LocalDateTime newReservedAt) {
+        return new Reservation(id, user, newSlot, waitingNumber, status, newReservedAt);
     }
 }

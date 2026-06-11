@@ -2,187 +2,175 @@ package roomescape.domain.reservation;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import roomescape.domain.reservationdate.ReservationDate;
-import roomescape.domain.reservationtime.ReservationTime;
+import roomescape.domain.exception.BusinessException;
+import roomescape.domain.exception.ErrorCode;
 import roomescape.domain.theme.Theme;
-import roomescape.support.exception.RoomescapeException;
+import roomescape.domain.user.User;
 
+@DisplayName("예약")
 class ReservationTest {
 
     @Test
-    @DisplayName("id가 없는 예약을 생성한다.")
-    void createReservationWithoutId() {
+    @DisplayName("생성하면 대기 상태로 시작한다")
+    void create() {
         // given
-        String name = "보예";
-        ReservationDate date = ReservationDate.createWithoutId(LocalDate.of(2023, 8, 5));
-        ReservationTime time = ReservationTime.createWithoutId(LocalTime.of(15, 40));
-        Theme theme = Theme.of(1L, "공포", "무서운 테마", "theme-url");
-
-        // when
-        Reservation reservation = Reservation.createWithoutId(name, date, time, theme);
-
-        // then
-        assertSoftly(softly -> {
-                softly.assertThat(reservation.getId()).isNull();
-                softly.assertThat(reservation.getName()).isEqualTo(name);
-                softly.assertThat(reservation.getDate()).isEqualTo(date);
-                softly.assertThat(reservation.getTime()).isEqualTo(time);
-                softly.assertThat(reservation.getTheme()).isEqualTo(theme);
-            }
-        );
-    }
-
-    @Test
-    @DisplayName("id를 부여한 예약을 생성한다.")
-    void createReservationWithId() {
-        // given
-        ReservationTime time = ReservationTime.createWithoutId(LocalTime.of(15, 40));
-        ReservationDate date = ReservationDate.createWithoutId(LocalDate.of(2023, 8, 5));
-        Theme theme = Theme.of(1L, "공포", "무서운 테마", "theme-url");
-        Reservation reservation = Reservation.createWithoutId(
-            "보예",
-            date,
-            time,
-            theme
+        User user = User.of(1L, "홍길동");
+        ReservationSlot slot = ReservationSlot.of(
+                10L,
+                LocalDate.of(2030, 1, 1),
+                ReservationTime.of(20L, LocalTime.of(13, 0)),
+                Theme.of(30L, "도심 탈출", "도심 탈출 설명", "/themes/chase")
         );
 
         // when
-        Reservation reservationWithId = Reservation.of(
-            1L,
-            reservation.getName(),
-            reservation.getDate(),
-            reservation.getTime(),
-            reservation.getTheme()
-        );
+        Reservation reservation = Reservation.create(user, slot, LocalDateTime.of(2030, 1, 1, 10, 0));
 
         // then
-        assertSoftly(softly -> {
-                assertThat(reservationWithId.getId()).isEqualTo(1L);
-                assertThat(reservationWithId.getName()).isEqualTo("보예");
-                assertThat(reservationWithId.getDate()).isEqualTo(date);
-                assertThat(reservationWithId.getTime()).isEqualTo(time);
-                assertThat(reservationWithId.getTheme()).isEqualTo(theme);
-            }
-        );
+        assertThat(reservation.getId()).isNull();
+        assertThat(reservation.getUser()).isEqualTo(user);
+        assertThat(reservation.getSlot()).isEqualTo(slot);
+        assertThat(reservation.getWaitingNumber()).isNull();
+        assertThat(reservation.getStatus()).isEqualTo(ReservationStatus.WAITING);
     }
 
     @Test
-    @DisplayName("DB에서 조회한 예약을 생성한다.")
-    void createReservationLoadedFromDatabase() {
+    @DisplayName("조회 결과를 그대로 담는다")
+    void of() {
         // given
-        long id = 1L;
-        String name = "보예";
-        ReservationDate date = ReservationDate.of(2L, LocalDate.of(2023, 8, 5));
-        ReservationTime time = ReservationTime.createWithoutId(LocalTime.of(15, 40));
-        Theme theme = Theme.of(1L, "공포", "무서운 테마", "theme-url");
+        User user = User.of(1L, "홍길동");
+        ReservationSlot slot = ReservationSlot.of(
+                10L,
+                LocalDate.of(2030, 1, 1),
+                ReservationTime.of(20L, LocalTime.of(13, 0)),
+                Theme.of(30L, "도심 탈출", "도심 탈출 설명", "/themes/chase")
+        );
 
         // when
-        Reservation reservation = Reservation.of(id, name, date, time, theme);
+        Reservation reservation = Reservation.of(
+                100L,
+                user,
+                slot,
+                1,
+                ReservationStatus.CONFIRMED,
+                LocalDateTime.of(2030, 1, 1, 10, 0)
+        );
 
         // then
-        assertSoftly(softly -> {
-                assertThat(reservation.getId()).isEqualTo(id);
-                assertThat(reservation.getName()).isEqualTo(name);
-                assertThat(reservation.getDate()).isEqualTo(date);
-                assertThat(reservation.getTime()).isEqualTo(time);
-                assertThat(reservation.getTheme()).isEqualTo(theme);
-            }
+        assertThat(reservation.getId()).isEqualTo(100L);
+        assertThat(reservation.getUser()).isEqualTo(user);
+        assertThat(reservation.getSlot()).isEqualTo(slot);
+        assertThat(reservation.getWaitingNumber()).isEqualTo(1);
+        assertThat(reservation.getStatus()).isEqualTo(ReservationStatus.CONFIRMED);
+    }
+
+    @Test
+    @DisplayName("예약을 확정 상태로 바꿀 수 있다")
+    void updateConfirmed() {
+        // given
+        Reservation reservation = Reservation.of(
+                100L,
+                User.of(1L, "홍길동"),
+                ReservationSlot.of(
+                        10L,
+                        LocalDate.of(2030, 1, 1),
+                        ReservationTime.of(20L, LocalTime.of(13, 0)),
+                        Theme.of(30L, "도심 탈출", "도심 탈출 설명", "/themes/chase")
+                ),
+                3,
+                ReservationStatus.WAITING,
+                LocalDateTime.of(2030, 1, 1, 10, 0)
         );
+
+        // when
+        Reservation updated = reservation.updateConfirmed();
+
+        // then
+        assertThat(updated.getId()).isEqualTo(100L);
+        assertThat(updated.getWaitingNumber()).isEqualTo(0);
+        assertThat(updated.getStatus()).isEqualTo(ReservationStatus.CONFIRMED);
+        assertThat(updated.getUser()).isEqualTo(reservation.getUser());
+        assertThat(updated.getSlot()).isEqualTo(reservation.getSlot());
     }
 
     @Test
-    @DisplayName("이름이 null이면 예외가 발생한다.")
-    void throwExceptionWhenNameIsNull() {
+    @DisplayName("예약을 대기 상태로 바꿀 수 있다")
+    void updateWaiting() {
         // given
-        String name = null;
-        ReservationDate date = ReservationDate.createWithoutId(LocalDate.of(2023, 8, 5));
-        ReservationTime time = ReservationTime.createWithoutId(LocalTime.of(15, 40));
-        Theme theme = Theme.of(1L, "공포", "무서운 테마", "theme-url");
+        Reservation reservation = Reservation.of(
+                100L,
+                User.of(1L, "홍길동"),
+                ReservationSlot.of(
+                        10L,
+                        LocalDate.of(2030, 1, 1),
+                        ReservationTime.of(20L, LocalTime.of(13, 0)),
+                        Theme.of(30L, "도심 탈출", "도심 탈출 설명", "/themes/chase")
+                ),
+                0,
+                ReservationStatus.CONFIRMED,
+                LocalDateTime.of(2030, 1, 1, 10, 0)
+        );
+
+        // when
+        Reservation updated = reservation.updateWaiting(2);
+
+        // then
+        assertThat(updated.getId()).isEqualTo(100L);
+        assertThat(updated.getWaitingNumber()).isEqualTo(2);
+        assertThat(updated.getStatus()).isEqualTo(ReservationStatus.WAITING);
+        assertThat(updated.getUser()).isEqualTo(reservation.getUser());
+        assertThat(updated.getSlot()).isEqualTo(reservation.getSlot());
+    }
+
+    @Test
+    @DisplayName("취소 가능 여부를 확인할 수 있다")
+    void validateCancellable() {
+        // given
+        Reservation reservation = Reservation.of(
+                100L,
+                User.of(1L, "홍길동"),
+                ReservationSlot.of(
+                        10L,
+                        LocalDate.of(2030, 1, 1),
+                        ReservationTime.of(20L, LocalTime.of(13, 0)),
+                        Theme.of(30L, "도심 탈출", "도심 탈출 설명", "/themes/chase")
+                ),
+                0,
+                ReservationStatus.CONFIRMED,
+                LocalDateTime.of(2030, 1, 1, 10, 0)
+        );
 
         // when & then
-        assertThatThrownBy(() -> Reservation.createWithoutId(name, date, time, theme))
-            .isInstanceOf(RoomescapeException.class)
-            .hasMessage("이름은 비어 있을 수 없습니다.");
+        reservation.validateCancellable(LocalDateTime.of(2030, 1, 1, 12, 0));
     }
 
     @Test
-    @DisplayName("이름이 공백이면 예외가 발생한다.")
-    void throwExceptionWhenNameIsBlank() {
+    @DisplayName("과거 슬롯의 예약은 취소할 수 없다")
+    void validateCancellableWhenPast() {
         // given
-        String name = "            ";
-        ReservationDate date = ReservationDate.createWithoutId(LocalDate.of(2023, 8, 5));
-        ReservationTime time = ReservationTime.createWithoutId(LocalTime.of(15, 40));
-        Theme theme = Theme.of(1L, "공포", "무서운 테마", "theme-url");
+        Reservation reservation = Reservation.of(
+                100L,
+                User.of(1L, "홍길동"),
+                ReservationSlot.of(
+                        10L,
+                        LocalDate.of(2030, 1, 1),
+                        ReservationTime.of(20L, LocalTime.of(13, 0)),
+                        Theme.of(30L, "도심 탈출", "도심 탈출 설명", "/themes/chase")
+                ),
+                0,
+                ReservationStatus.CONFIRMED,
+                LocalDateTime.of(2030, 1, 1, 10, 0)
+        );
 
         // when & then
-        assertThatThrownBy(() -> Reservation.createWithoutId(name, date, time, theme))
-            .isInstanceOf(RoomescapeException.class)
-            .hasMessage("이름은 비어 있을 수 없습니다.");
-    }
-
-    @Test
-    @DisplayName("이름이 10자를 초과하면 예외가 발생한다.")
-    void throwExceptionWhenNameExceedsTenCharacters() {
-        // given
-        String name = "보예보예보예보예보예보";
-        ReservationDate date = ReservationDate.createWithoutId(LocalDate.of(2023, 8, 5));
-        ReservationTime time = ReservationTime.createWithoutId(LocalTime.of(15, 40));
-        Theme theme = Theme.of(1L, "공포", "무서운 테마", "theme-url");
-
-        // when & then
-        assertThatThrownBy(() -> Reservation.createWithoutId(name, date, time, theme))
-            .isInstanceOf(RoomescapeException.class)
-            .hasMessage("이름은 10자 이하여야 합니다.");
-    }
-
-    @Test
-    @DisplayName("날짜가 null이면 예외가 발생한다.")
-    void throwExceptionWhenDateIsNull() {
-        // given
-        String name = "보예";
-        ReservationDate date = null;
-        ReservationTime time = ReservationTime.createWithoutId(LocalTime.of(15, 40));
-        Theme theme = Theme.of(1L, "공포", "무서운 테마", "theme-url");
-
-        // when & hen
-        assertThatThrownBy(() -> Reservation.createWithoutId(name, date, time, theme))
-            .isInstanceOf(RoomescapeException.class)
-            .hasMessage("날짜는 필수입니다.");
-    }
-
-    @Test
-    @DisplayName("예약 시간이 null이면 예외가 발생한다.")
-    void throwExceptionWhenReservationTimeIsNull() {
-        // given
-        String name = "보예";
-        ReservationDate date = ReservationDate.createWithoutId(LocalDate.of(2023, 8, 5));
-        ReservationTime time = null;
-        Theme theme = Theme.of(1L, "공포", "무서운 테마", "theme-url");
-
-        // when & then
-        assertThatThrownBy(() -> Reservation.createWithoutId(name, date, time, theme))
-            .isInstanceOf(RoomescapeException.class)
-            .hasMessage("시간은 필수입니다.");
-    }
-
-    @Test
-    @DisplayName("테마가 null이면 예외가 발생한다.")
-    void throwExceptionWhenThemeIsNull() {
-        // given
-        String name = "보예";
-        ReservationDate date = ReservationDate.createWithoutId(LocalDate.of(2023, 8, 5));
-        ReservationTime time = ReservationTime.createWithoutId(LocalTime.of(15, 40));
-        Theme theme = null;
-
-        // when & then
-        assertThatThrownBy(() -> Reservation.createWithoutId(name, date, time, theme))
-            .isInstanceOf(RoomescapeException.class)
-            .hasMessage("테마는 필수입니다.");
+        assertThatThrownBy(() -> reservation.validateCancellable(LocalDateTime.of(2030, 1, 1, 14, 0)))
+                .isInstanceOf(BusinessException.class)
+                .extracting("errorCode")
+                .isEqualTo(ErrorCode.RESERVATION_SLOT_IN_PAST);
     }
 }

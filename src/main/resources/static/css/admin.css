@@ -157,7 +157,6 @@ a {
 }
 
 .token-row input,
-.admin-form input {
     width: 100%;
     min-height: 46px;
     padding: 0 14px;
@@ -168,7 +167,6 @@ a {
 }
 
 .token-row input:focus,
-.admin-form input:focus {
     border-color: var(--blue);
 }
 
